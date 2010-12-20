@@ -41,7 +41,11 @@ public class FancyCanvas extends JPanel {
 		childPanel.setMinimumSize(null);
 		childPanel.setMinimumSize(d);
 		compEventListener.resize(d);
-		childPanel.revalidate();
+		this.revalidate();
+	}
+	
+	public void refresh() {
+		repaint();
 	}
 	
 	public RenderedImage getImage() {

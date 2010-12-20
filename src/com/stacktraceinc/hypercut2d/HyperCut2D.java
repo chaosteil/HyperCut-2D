@@ -182,6 +182,7 @@ public class HyperCut2D {
 		btnOptimizuotiIdstym.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				fancyCanvas.setPartList(packer.pack(partListHandler.getParts()));
+				fancyCanvas.refresh();
 			}
 		});
 
