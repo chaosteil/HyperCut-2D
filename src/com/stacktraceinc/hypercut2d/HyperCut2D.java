@@ -10,13 +10,18 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.awt.print.PrinterJob;
 
+import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,6 +35,7 @@ import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -46,6 +52,8 @@ import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
+import java.io.IOException;
 import java.awt.Toolkit;
 
 public class HyperCut2D {
@@ -166,8 +174,78 @@ public class HyperCut2D {
 		pnlBrezinioVeiksmai.add(btnOptimizuotiIdstym, "cell 0 0,alignx left,growy");
 		btnOptimizuotiIdstym.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/wrench_orange.png")));
 		
-		JButton btnSpausdinti = new JButton("Spausdinti...");
-		btnSpausdinti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/printer.png")));
+		JButton btnSpausdinti = new JButton("Eksportuoti spausdinimui...");
+		btnSpausdinti.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+					JFileChooser fileChooser = new JFileChooser();
+					FileFilter jpegFileFilter = new FileFilter() {
+						@Override
+						public boolean accept(File f) {
+							String path = f.getName();
+							String extension = path.substring(path.lastIndexOf('.') + 1);
+							if (extension.equals("jpg") || extension.equals("jpeg")) {
+								return true;
+							}
+							return false;
+						}
+
+						@Override
+						public String getDescription() {
+							return "JPEG Image (.jpg, .jpeg)";
+						}
+					};
+					FileFilter pngFileFilter = new FileFilter() {
+						@Override
+						public boolean accept(File f) {
+							String path = f.getName();
+							String extension = path.substring(path.lastIndexOf('.') + 1);
+							if (extension.equals("png")) {
+								return true;
+							}
+							return false;
+						}
+
+						@Override
+						public String getDescription() {
+							return "PNG Image (.png)";
+						}
+					};
+					fileChooser.addChoosableFileFilter(jpegFileFilter);
+					fileChooser.addChoosableFileFilter(pngFileFilter);
+
+					int result = fileChooser.showSaveDialog(frmHypercut);
+					if (result == JFileChooser.APPROVE_OPTION) {
+						File file = fileChooser.getSelectedFile();
+						String path = file.getAbsolutePath();
+						String extension = path.substring(path.lastIndexOf('.') + 1);
+						String format;
+						if (fileChooser.getFileFilter() == jpegFileFilter){
+							// jpeg
+							if (!(extension.equals("jpg") || extension.equals("jpeg"))) {
+								path = path + ".jpg";
+							}
+							format = "JPEG";
+						} else {
+							// It's a png image!
+							if (!extension.equals("png")) {
+								path = path + ".png";
+							}
+							format = "PNG";
+						}
+						System.out.println(path + " " + format);
+						try {
+							File saving_file = new File(path);
+							RenderedImage image = fancyCanvas.getImage();
+							System.out.println(image.getHeight());
+							ImageIO.write(image, format, saving_file);
+						} catch (IOException ioe) {
+							ioe.printStackTrace();
+						}
+					}
+			}
+		});
+		btnSpausdinti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/script_go.png")));
 		pnlBrezinioVeiksmai.add(btnSpausdinti, "cell 1 0,alignx right,growy");
 		
 		JPanel pnlDetales = new JPanel();

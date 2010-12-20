@@ -3,8 +3,14 @@ package com.stacktraceinc.hypercut2d;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
 
 import javax.swing.JPanel;
 
@@ -33,6 +39,15 @@ public class FancyCanvas extends JPanel {
 		childPanel.setMinimumSize(d);
 		compEventListener.resize(d);
 		childPanel.revalidate();
+	}
+	
+	public RenderedImage getImage() {
+		BufferedImage bi = new BufferedImage(childPanel.getWidth(), childPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+	    Graphics2D g = bi.createGraphics();
+	    paint(g);
+	    g.dispose();
+	    return bi;
 	}
 
 	public void paint(Graphics g){
