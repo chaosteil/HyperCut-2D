@@ -25,6 +25,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Toolkit;
 
 public class CanvasSizes extends JDialog {
 
@@ -37,6 +38,7 @@ public class CanvasSizes extends JDialog {
 	 */
 	public CanvasSizes(JFrame owner, CanvasSizeHandler handler) {
 		super(owner, true);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(CanvasSizes.class.getResource("/resources/page_gear.png")));
 		this.handler = handler;
 		
 		setTitle("Br\u0117\u017Einio dyd\u017Eiai");
@@ -70,7 +72,7 @@ public class CanvasSizes extends JDialog {
 					
 				}
 			});
-			btnPridtiNauj.setIcon(new ImageIcon(CanvasSizes.class.getResource("/javax/swing/plaf/metal/icons/ocean/file.gif")));
+			btnPridtiNauj.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/page_add.png")));
 			contentPanel.add(btnPridtiNauj, "flowx,cell 0 1,grow");
 		}
 		{
@@ -89,7 +91,7 @@ public class CanvasSizes extends JDialog {
 					CanvasSizes.this.handler.eraseSize(lstDydziai.getSelectedIndex());
 				}
 			});
-			btnItrinti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/javax/swing/plaf/metal/icons/ocean/close.gif")));
+			btnItrinti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/page_delete.png")));
 			contentPanel.add(btnItrinti, "cell 0 1,grow");
 		}
 		{
@@ -97,14 +99,14 @@ public class CanvasSizes extends JDialog {
 			contentPanel.add(horizontalStrut, "cell 0 2");
 		}
 		{
-			JButton btnIsaugoti = new JButton("I\u0161saugoti...");
-			btnIsaugoti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/javax/swing/plaf/metal/icons/ocean/floppy.gif")));
-			contentPanel.add(btnIsaugoti, "flowx,cell 0 3,grow");
+			JButton btnAtidaryti = new JButton("Atidaryti...");
+			btnAtidaryti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/folder.png")));
+			contentPanel.add(btnAtidaryti, "flowx,cell 0 3,grow");
 		}
 		{
-			JButton btnAtidaryti = new JButton("Atidaryti...");
-			btnAtidaryti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/javax/swing/plaf/metal/icons/ocean/directory.gif")));
-			contentPanel.add(btnAtidaryti, "cell 0 3,grow");
+			JButton btnIsaugoti = new JButton("I\u0161saugoti...");
+			btnIsaugoti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/page_save.png")));
+			contentPanel.add(btnIsaugoti, "cell 0 3,grow");
 		}
 		{
 			JPanel btpVeiksmai = new JPanel();
@@ -112,6 +114,7 @@ public class CanvasSizes extends JDialog {
 			getContentPane().add(btpVeiksmai, BorderLayout.SOUTH);
 			{
 				JButton btnIseiti = new JButton("I\u0161eiti");
+				btnIseiti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/accept.png")));
 				btnIseiti.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						setVisible(false);

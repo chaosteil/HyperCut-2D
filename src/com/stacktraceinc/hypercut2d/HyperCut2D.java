@@ -46,6 +46,7 @@ import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.awt.Toolkit;
 
 public class HyperCut2D {
 	public static final String UNSELECTED_PART = "UNSELECTED_PART";
@@ -67,6 +68,7 @@ public class HyperCut2D {
 	private JPanel pnlDetale;
 	private JComboBox cbxBrezinioDydis;
 	private JLabel lblBrezinioDydis;
+	private JScrollPane srlDetales;
 
 
 	/**
@@ -106,6 +108,7 @@ public class HyperCut2D {
 	private void initialize() {
 		
 		frmHypercut = new JFrame();
+		frmHypercut.setIconImage(Toolkit.getDefaultToolkit().getImage(HyperCut2D.class.getResource("/resources/layout.png")));
 		frmHypercut.setTitle("HyperCut 2D");
 		frmHypercut.setBounds(100, 100, 836, 677);
 		frmHypercut.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -144,7 +147,7 @@ public class HyperCut2D {
 				JDialog cvs = new CanvasSizes(frmHypercut, canvasSizeHandler);
 			}
 		});
-		btnKeistiDydius.setIcon(new ImageIcon(HyperCut2D.class.getResource("/javax/swing/plaf/metal/icons/ocean/maximize.gif")));
+		btnKeistiDydius.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/page_gear.png")));
 		pnlBrezinioDydis.add(btnKeistiDydius, "cell 2 0,alignx center,growy");
 		
 		JScrollPane srpBrezinys = new JScrollPane();
@@ -161,9 +164,10 @@ public class HyperCut2D {
 		
 		JButton btnOptimizuotiIdstym = new JButton("Optimizuoti i\u0161d\u0117stym\u0105");
 		pnlBrezinioVeiksmai.add(btnOptimizuotiIdstym, "cell 0 0,alignx left,growy");
-		btnOptimizuotiIdstym.setIcon(new ImageIcon(HyperCut2D.class.getResource("/javax/swing/plaf/metal/icons/ocean/minimize.gif")));
+		btnOptimizuotiIdstym.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/wrench_orange.png")));
 		
 		JButton btnSpausdinti = new JButton("Spausdinti...");
+		btnSpausdinti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/printer.png")));
 		pnlBrezinioVeiksmai.add(btnSpausdinti, "cell 1 0,alignx right,growy");
 		
 		JPanel pnlDetales = new JPanel();
@@ -182,17 +186,17 @@ public class HyperCut2D {
 		
 		JButton btnAtdaryti = new JButton("Atidaryti...");
 		pnlSarasoVeiksmai.add(btnAtdaryti, "cell 0 0,grow");
-		btnAtdaryti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/javax/swing/plaf/metal/icons/ocean/directory.gif")));
+		btnAtdaryti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_open.png")));
 		
 		JButton btnIssaugoti = new JButton("I\u0161saugoti...");
 		pnlSarasoVeiksmai.add(btnIssaugoti, "cell 1 0,growy");
-		btnIssaugoti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/javax/swing/plaf/metal/icons/ocean/floppy.gif")));
+		btnIssaugoti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_save.png")));
 		btnIssaugoti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
 		
-		JScrollPane srlDetales = new JScrollPane();
+		srlDetales = new JScrollPane();
 		pnlSarasas.add(srlDetales, "cell 0 1,grow");
 		
 		tblDetales = new JTable();
@@ -222,9 +226,12 @@ public class HyperCut2D {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
 				partListHandler.createNewPart();
+				ListSelectionModel selectionModel = tblDetales.getSelectionModel();
+				selectionModel.setSelectionInterval(0, tblDetales.getRowCount()-1);
+				tblDetales.scrollRectToVisible(tblDetales.getCellRect(tblDetales.getRowCount()-1, 0, true));
 			}
 		});
-		btnNaujaDetale.setIcon(new ImageIcon(HyperCut2D.class.getResource("/javax/swing/plaf/metal/icons/ocean/file.gif")));
+		btnNaujaDetale.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_add.png")));
 		
 		JButton btnKlonuotiPasirinktaDetal = new JButton("Klonuoti detal\u0119");
 		btnKlonuotiPasirinktaDetal.addMouseListener(new MouseAdapter() {
@@ -234,9 +241,13 @@ public class HyperCut2D {
 					return;
 				}
 				partListHandler.clonePart(tblDetales.getSelectedRow());
+				ListSelectionModel selectionModel = tblDetales.getSelectionModel();
+				selectionModel.setSelectionInterval(0, tblDetales.getRowCount()-1);
+				tblDetales.scrollRectToVisible(tblDetales.getCellRect(tblDetales.getRowCount()-1, 0, true));
+				
 			}
 		});
-		btnKlonuotiPasirinktaDetal.setIcon(new ImageIcon(HyperCut2D.class.getResource("/javax/swing/plaf/metal/icons/ocean/collapsed.gif")));
+		btnKlonuotiPasirinktaDetal.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_create.png")));
 		btnKlonuotiPasirinktaDetal.setSelectedIcon(null);
 		pnlDetaliuVeiksmai.add(btnKlonuotiPasirinktaDetal, "cell 0 1,growy");
 		
@@ -247,10 +258,24 @@ public class HyperCut2D {
 				if (tblDetales.getSelectedRow() == -1){
 					return;
 				}
-				partListHandler.erasePart(tblDetales.getSelectedRow());
+				int row = tblDetales.getSelectedRow();
+				partListHandler.erasePart(row);
+
+				if (tblDetales.getRowCount() == 0) {
+					return;
+				}
+				
+				if (tblDetales.getRowCount() <= row) {
+					row = tblDetales.getRowCount()-1;
+				}
+				
+				ListSelectionModel selectionModel = tblDetales.getSelectionModel();
+				selectionModel.setSelectionInterval(0, row);
+
+				tblDetales.scrollRectToVisible(tblDetales.getCellRect(tblDetales.getRowCount()-1, 0, true));
 			}
 		});
-		btnItrintiDetal.setIcon(new ImageIcon(HyperCut2D.class.getResource("/javax/swing/plaf/metal/icons/ocean/close.gif")));
+		btnItrintiDetal.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_delete.png")));
 		pnlDetaliuVeiksmai.add(btnItrintiDetal, "cell 2 1,growy");
 		
 		pnlDetale = new JPanel();

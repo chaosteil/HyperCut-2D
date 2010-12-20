@@ -16,6 +16,8 @@ import javax.swing.JFormattedTextField;
 import javax.swing.SpinnerNumberModel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.ImageIcon;
+import java.awt.Toolkit;
 
 public class CanvasSizeDialog extends JDialog {
 
@@ -29,6 +31,7 @@ public class CanvasSizeDialog extends JDialog {
 	 */
 	public CanvasSizeDialog(JDialog owner) {
 		super(owner, true);
+		setIconImage(Toolkit.getDefaultToolkit().getImage(CanvasSizeDialog.class.getResource("/resources/page_add.png")));
 		setTitle("Prid\u0117ti br\u0117\u017Einio dyd\u012F...");
 		setResizable(false);
 		setBounds(100, 100, 367, 129);
@@ -68,6 +71,7 @@ public class CanvasSizeDialog extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("Prid\u0117ti");
+				okButton.setIcon(new ImageIcon(CanvasSizeDialog.class.getResource("/resources/page_add.png")));
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						okay = true;
@@ -78,6 +82,7 @@ public class CanvasSizeDialog extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("At\u0161aukti");
+				cancelButton.setIcon(new ImageIcon(CanvasSizeDialog.class.getResource("/resources/cancel.png")));
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						okay = false;

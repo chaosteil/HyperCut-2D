@@ -8,15 +8,18 @@ public class PartListHandler extends AbstractModelObject {
 	public static final String SQUARE = "Kvadratas";
 	
 	private List<Part> parts = new ArrayList<Part>();
+	private int autoIndex = 0;
 	
 	public List<Part> getParts() { return parts; }
 	
 	public PartListHandler() {
+		
 	}
 	
 	public void createNewPart() {
+		autoIndex++;
 		// Automatic part creation based on previously selected?
-		addPart(new Rectangle("Test", RECTANGLE, 10, 20));
+		addPart(new Rectangle("Detalë #" + autoIndex, RECTANGLE, 10, 20));
 	}
 	
 	public void clonePart(int index) {
