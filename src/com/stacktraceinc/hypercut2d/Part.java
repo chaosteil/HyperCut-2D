@@ -7,7 +7,7 @@ public class Part extends AbstractModelObject {
 	private String form;
 	private int firstValue = 0;
 	private int secondValue = 0;
-	private boolean rotated = false;
+	boolean rotated = false;
 	private Coordinate coord = new Coordinate(-1, -1);
 	private Color color = Color.WHITE;
 
@@ -15,13 +15,16 @@ public class Part extends AbstractModelObject {
 	public String getName() { return name; }
 	public int getFirstValue() { return firstValue; }
 	public int getSecondValue() { return secondValue; }
-	public Color getColor() { return color; }
 	public Coordinate getCoord(){ return this.coord; }
 	public int getX() { return this.coord.getX(); }
 	public int getY() { return this.coord.getY(); }
 	public int getArea() { return firstValue * secondValue; }
+	public Color getColor() { return color; }
 	
 	public void setForm(String form) {
+		if (form == PartListHandler.SQUARE) {
+			setSecondValue(this.firstValue);
+		}
 		String oldValue = this.form;
 		this.form = form;
 		firePropertyChange("form", oldValue, form);
@@ -32,6 +35,9 @@ public class Part extends AbstractModelObject {
 		firePropertyChange("name", oldValue, name);
 	}
 	public void setFirstValue(int firstValue) {
+		if (form == PartListHandler.SQUARE) {
+			setSecondValue(firstValue);
+		}
 		int oldValue = this.firstValue;
 		this.firstValue = firstValue;
 		firePropertyChange("firstValue", oldValue, firstValue);
@@ -41,23 +47,24 @@ public class Part extends AbstractModelObject {
 		this.secondValue = secondValue;
 		firePropertyChange("secondValue", oldValue, secondValue);
 	}
-	public void setColor(Color color) {
-		Color oldColor = this.color;
-		this.color = color;
-		firePropertyChange("color", oldColor, color);
-	}	
+	
 	public void setCoordinate(Coordinate coord) {
 		Coordinate oldCoord = this.coord;
 		this.coord = coord;
 		firePropertyChange("coordinate", oldCoord, coord);
 	}	
 
+	public void setColor(Color color) {
+		Color oldColor = this.color;
+		this.color = color;
+		firePropertyChange("color", oldColor, color);
+	}	
+	
 	public void rotate(){
-		if(this.rotated == false){
-			this.rotated = true;
-		}else{
-			this.rotated = false;
-		}
+		this.rotated = !this.rotated;
+		int temp = firstValue;
+		firstValue = secondValue;
+		secondValue = temp;
 	}
 	
 	public boolean rotation(){ return rotated; }

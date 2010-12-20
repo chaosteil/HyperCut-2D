@@ -12,7 +12,8 @@ public class CanvasSizeHandler extends AbstractModelObject {
 	}
 	
 	public CanvasSizeHandler() {
-		addSize(new Dimension(1000, 1000));
+		addSize(new Dimension(1200, 2500));
+		addSize(new Dimension(1200, 3050));
 	}
 	
 	public void eraseSize(int index) {

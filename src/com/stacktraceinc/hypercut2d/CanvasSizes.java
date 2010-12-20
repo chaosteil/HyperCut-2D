@@ -1,13 +1,13 @@
 package com.stacktraceinc.hypercut2d;
 
 import java.awt.BorderLayout;
-import java.awt.FileDialog;
 import java.awt.FlowLayout;
+import java.awt.FileDialog;
 
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
@@ -43,7 +43,7 @@ public class CanvasSizes extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public CanvasSizes(JFrame owner, CanvasSizeHandler handler) {
+	public CanvasSizes(final JFrame owner, final CanvasSizeHandler handler) {
 		super(owner, true);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(CanvasSizes.class.getResource("/resources/page_gear.png")));
 		this.handler = handler;
@@ -65,8 +65,9 @@ public class CanvasSizes extends JDialog {
 		}
 		{
 			JButton btnPridtiNauj = new JButton("Prid\u0117ti nauj\u0105...");
-			btnPridtiNauj.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
+			btnPridtiNauj.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
 					CanvasSizeDialog cvd = new CanvasSizeDialog(CanvasSizes.this);
 					if (!cvd.okay) {
 						return;
@@ -106,9 +107,11 @@ public class CanvasSizes extends JDialog {
 		}
 		{
 			JButton btnAtidaryti = new JButton("Atidaryti...");
+			btnAtidaryti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/folder.png")));
+			contentPanel.add(btnAtidaryti, "flowx,cell 0 3,grow");
 			btnAtidaryti.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					FileDialog fileDialog = new FileDialog(CanvasSizes.this);
+					FileDialog fileDialog = new FileDialog(owner);
 					fileDialog.setMode(FileDialog.LOAD);
 					fileDialog.show();
 					String fileName = fileDialog.getFile();
@@ -132,37 +135,37 @@ public class CanvasSizes extends JDialog {
 						    	CanvasSizes.this.handler.addSize(dimension);
 						    }
 						} catch (Exception e) {
-							JOptionPane.showMessageDialog(CanvasSizes.this, "Nurodytas blogas paneli\u0173 failas.", "Klaida", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(owner, "Nurodytas blogas paneli\u0173 failas.", "Klaida", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
 			});
-			btnAtidaryti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/folder.png")));
-			contentPanel.add(btnAtidaryti, "flowx,cell 0 3,grow");
 		}
 		{
 			JButton btnIsaugoti = new JButton("I\u0161saugoti...");
+			btnIsaugoti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/page_save.png")));
+			contentPanel.add(btnIsaugoti, "cell 0 3,grow");
 			btnIsaugoti.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0) {
-					FileDialog fileDialog = new FileDialog(new JFrame());
-					fileDialog.setMode(FileDialog.SAVE);
-					fileDialog.show();
-					String fileName = fileDialog.getFile();
-					String directoryName = fileDialog.getDirectory();
-					if (fileName != null) {
-						BufferedWriter out;
-						try {
-							out = new BufferedWriter(new FileWriter(directoryName + fileName));
-							for (Dimension dimension: CanvasSizes.this.handler.getSizes()) {
-							    out.write((int)dimension.getWidth() + "\n");
-							    out.write((int)dimension.getHeight() + "\n");
-							}
-							out.close();
-						} catch (IOException e) {
-							
-					    }
-					}
+			public void actionPerformed(ActionEvent arg0) {
+				FileDialog fileDialog = new FileDialog(new JFrame());
+				fileDialog.setMode(FileDialog.SAVE);
+				fileDialog.show();
+				String fileName = fileDialog.getFile();
+				String directoryName = fileDialog.getDirectory();
+				if (fileName != null) {
+					BufferedWriter out;
+					try {
+						out = new BufferedWriter(new FileWriter(directoryName + fileName));
+						for (Dimension dimension: handler.getSizes()) {
+						    out.write((int)dimension.getWidth() + "\n");
+						    out.write((int)dimension.getHeight() + "\n");
+						}
+						out.close();
+					} catch (IOException e) {
+						
+				    }
 				}
+			}
 			});
 			btnIsaugoti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/page_save.png")));
 			contentPanel.add(btnIsaugoti, "cell 0 3,grow");

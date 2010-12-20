@@ -69,29 +69,25 @@ public class Packer{
 				System.out.println(this.pb.getWidth() + " w " + rect.getFirstValue());
 				System.out.println(this.pb.getHeight() + " h " + rect.getSecondValue());
 				
+				if((pb.getWidth() > pb.getHeight()) && (rect.getFirstValue() < rect.getSecondValue())){
+					rect.rotate();
+				}else if((pb.getWidth() < pb.getHeight()) && (rect.getFirstValue() > rect.getSecondValue())){
+					rect.rotate();
+				}
+				
 				if(this.pb.getSize() < rect.getArea() || pb.getWidth() < rect.getFirstValue() || pb.getHeight() < rect.getSecondValue()){
 					System.out.println("Shape too big");
 					rect.setCoordinate(new Coordinate(-1, -1));
 					return null;
 				}
-
-				
-				
-				
-				
+			
 				if((this.pb.getWidth() == rect.getFirstValue()) 
 				&& (this.pb.getHeight() == rect.getSecondValue()) ){
 					this.rect = rect;
 					rect.setCoordinate(this.coord);
 					System.out.println("inserting at: " + this.coord.getX() + " " + this.coord.getY() + " " + " ");
 					return this;	
-				}
-
-				if((pb.getWidth() > pb.getHeight()) && (rect.getFirstValue() < rect.getSecondValue())){
-					rect.rotate();
-				}else if((pb.getWidth() < pb.getHeight()) && (rect.getFirstValue() > rect.getSecondValue())){
-					rect.rotate();
-				}
+				}			
 				
 				this.child[0] = new PackerNode();
 				this.child[1] = new PackerNode();
@@ -131,6 +127,11 @@ public class Packer{
 		for(Part part : list){
 			sortedList.add(part.clone());
 		}
+/*		
+		for(Part part : sortedList){
+			part.setFirstValue(part.getFirstValue() + 4);
+			part.setSecondValue(part.getSecondValue() + 4);
+		}*/
 		
 		Collections.sort(sortedList, new PartComparator());
 		return sortedList;

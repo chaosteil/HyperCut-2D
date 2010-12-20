@@ -76,7 +76,6 @@ public class HyperCut2D {
 	private JComboBox cbxForma;
 	private JPanel detaliuNustatymai;
 	
-
 	private FancyCanvas fancyCanvas = new FancyCanvas(new Dimension(0, 0));
 	private PartListHandler partListHandler = new PartListHandler();
 	private CanvasSizeHandler canvasSizeHandler = new CanvasSizeHandler();
@@ -88,6 +87,7 @@ public class HyperCut2D {
 	private JScrollPane srlDetales;
 	private JPanel pnlSpalva;
 	private Packer packer = new Packer(0, 0);
+
 
 	/**
 	 * Launch the application.
@@ -181,16 +181,28 @@ public class HyperCut2D {
 		pnlBrezinioVeiksmai.setLayout(new MigLayout("", "[left][right]", "[][]"));
 		
 		JButton btnOptimizuotiIdstym = new JButton("Optimizuoti i\u0161d\u0117stym\u0105");
+		
 		pnlBrezinioVeiksmai.add(btnOptimizuotiIdstym, "cell 0 0,alignx left,growy");
 		btnOptimizuotiIdstym.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/wrench_orange.png")));
 		btnOptimizuotiIdstym.addActionListener(new ActionListener() {
+			
 			public void actionPerformed(ActionEvent arg0) {
-				fancyCanvas.setPartList(packer.pack(partListHandler.getParts()));
+				List<Part> optimisedList = packer.pack(partListHandler.getParts());
+				for(Part part : optimisedList){
+					if (part.getCoord().compare(new Coordinate(-1, -1)))
+					{
+						JOptionPane.showMessageDialog(frmHypercut, "Ne visos detal\u0117s tilpo \u012f panel\u0119.", "Klaida", JOptionPane.ERROR_MESSAGE);
+						break;
+					}
+				}
+				fancyCanvas.setPartList(optimisedList);
 				fancyCanvas.refresh();
 			}
 		});
-
+		
 		JButton btnSpausdinti = new JButton("Eksportuoti spausdinimui...");
+		btnSpausdinti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/script_go.png")));
+		pnlBrezinioVeiksmai.add(btnSpausdinti, "cell 1 0,alignx left,growy");
 		btnSpausdinti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				JFileChooser fileChooser = new JFileChooser();
@@ -260,8 +272,10 @@ public class HyperCut2D {
 				}
 			}
 		});
-		btnSpausdinti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/script_go.png")));
-		pnlBrezinioVeiksmai.add(btnSpausdinti, "cell 1 0,alignx right,growy");
+		
+		btnOptimizuotiIdstym.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/wrench_orange.png")));
+		pnlBrezinioVeiksmai.add(btnOptimizuotiIdstym, "cell 0 0,alignx left,growy");
+
 		
 		JPanel pnlDetales = new JPanel();
 		pnlDetales.setBorder(new TitledBorder(null, "D\u0117tales", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -275,7 +289,7 @@ public class HyperCut2D {
 		
 		JPanel pnlSarasoVeiksmai = new JPanel();
 		pnlSarasas.add(pnlSarasoVeiksmai, "cell 0 0,alignx center,growy");
-		pnlSarasoVeiksmai.setLayout(new MigLayout("", "[][][]", "[]"));
+		pnlSarasoVeiksmai.setLayout(new MigLayout("", "[][]", "[]"));
 		
 		JButton btnAtdaryti = new JButton("Atidaryti...");
 		pnlSarasoVeiksmai.add(btnAtdaryti, "cell 0 0,grow");
@@ -292,7 +306,7 @@ public class HyperCut2D {
 						BufferedReader in = new BufferedReader(new FileReader(directoryName + fileName));
 					    String name;
 					    String form;
-					    String color;
+					    String color;					    
 					    int x;
 					    int y;
 					    int width;
@@ -301,7 +315,7 @@ public class HyperCut2D {
 					    while (in.ready()) {
 					        name = in.readLine();
 					        form = in.readLine();
-					        color = in.readLine();
+					        color = in.readLine();					     
 					        x = Integer.parseInt(in.readLine());
 					        y = Integer.parseInt(in.readLine());
 					        width = Integer.parseInt(in.readLine());
@@ -322,10 +336,10 @@ public class HyperCut2D {
 				}
 			}
 		});
-
+		
 		
 		JButton btnIssaugoti = new JButton("I\u0161saugoti...");
-		pnlSarasoVeiksmai.add(btnIssaugoti, "cell 1 0,growy");
+		pnlSarasoVeiksmai.add(btnIssaugoti, "cell 1 0,grow");
 		btnIssaugoti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_save.png")));
 		btnIssaugoti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -343,7 +357,7 @@ public class HyperCut2D {
 						    out.write(part.getForm() + "\n");
 						    out.write(Integer.toString(part.getColor().getRed(), 16));
 						    out.write(Integer.toString(part.getColor().getGreen(), 16));
-						    out.write(Integer.toString(part.getColor().getBlue(), 16) + "\n");
+						    out.write(Integer.toString(part.getColor().getBlue(), 16) + "\n");						 
 						    out.write(Integer.toString(part.getX()) + "\n");
 						    out.write(Integer.toString(part.getY()) + "\n");
 						    out.write(Integer.toString(part.getFirstValue()) + "\n");
@@ -356,7 +370,6 @@ public class HyperCut2D {
 				}
 			}
 		});
-
 		
 		srlDetales = new JScrollPane();
 		pnlSarasas.add(srlDetales, "cell 0 1,grow");
@@ -394,7 +407,7 @@ public class HyperCut2D {
 		});
 		btnNaujaDetale.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_add.png")));
 		
-		JButton btnKlonuotiPasirinktaDetal = new JButton("Klonuoti detal\u0119");
+		JButton btnKlonuotiPasirinktaDetal = new JButton("Kopijuoti detal\u0119");
 		btnKlonuotiPasirinktaDetal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (tblDetales.getSelectedRow() == -1){
@@ -455,7 +468,7 @@ public class HyperCut2D {
 		
 		JPanel pnlPastovusNustatymai = new JPanel();
 		pnlIsrinktaDetale.add(pnlPastovusNustatymai, "cell 0 0,growx,aligny top");
-		pnlPastovusNustatymai.setLayout(new MigLayout("", "[][grow]", "[][][grow][grow]"));
+		pnlPastovusNustatymai.setLayout(new MigLayout("", "[][grow]", "[][][grow]"));
 		
 		lblPavadinimas = new JLabel("Pavadinimas:");
 		pnlPastovusNustatymai.add(lblPavadinimas, "cell 0 0,alignx trailing");
@@ -490,6 +503,7 @@ public class HyperCut2D {
 		pnlSpalva.setBackground(Color.WHITE);
 		pnlSpalva.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		pnlPastovusNustatymai.add(pnlSpalva, "cell 1 2,grow");
+		
 		cbxForma.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				CardLayout cardLayout = (CardLayout)(detaliuNustatymai.getLayout());
@@ -497,7 +511,7 @@ public class HyperCut2D {
 			}
 		});
 		
-		detaliuNustatymai.setBorder(new TitledBorder(null, "Formos duomenys", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		detaliuNustatymai.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Detal\u0117s matmenys", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		pnlIsrinktaDetale.add(detaliuNustatymai, "cell 0 1,grow");
 		detaliuNustatymai.setLayout(new CardLayout(0, 0));
 		

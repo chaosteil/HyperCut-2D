@@ -20,8 +20,8 @@ import javax.swing.JPanel;
 public class FancyCanvas extends JPanel {
 	JPanel childPanel = new JPanel();
 	CompEventListener compEventListener = new CompEventListener();
-	Dimension d;
 	List<Part> partList = new ArrayList<Part>();
+	Dimension d;
 
 	public FancyCanvas(Dimension d){
 		setLayout(new GridBagLayout());
@@ -43,7 +43,7 @@ public class FancyCanvas extends JPanel {
 		compEventListener.resize(d);
 		this.revalidate();
 	}
-	
+
 	public void refresh() {
 		repaint();
 	}
@@ -55,8 +55,8 @@ public class FancyCanvas extends JPanel {
 	    paintOffset(g, 0, 0);
 	    g.dispose();
 	    return bi;
-	}
-
+	}	
+	
 	public void paint(Graphics g){
 		g.setColor(Color.GRAY);
 		g.fillRect(0, 0, getWidth(), getHeight());
@@ -85,7 +85,7 @@ public class FancyCanvas extends JPanel {
 			}
 		}
 	}
-	
+
 	public void setPartList(List<Part> newPartList){
 		this.partList = newPartList;
 	}
