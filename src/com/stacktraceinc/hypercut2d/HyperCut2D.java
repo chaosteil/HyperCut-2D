@@ -19,6 +19,7 @@ import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -61,6 +62,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.Toolkit;
+import javax.swing.border.EtchedBorder;
+import java.awt.FlowLayout;
 
 public class HyperCut2D {
 	public static final String UNSELECTED_PART = "UNSELECTED_PART";
@@ -83,6 +86,7 @@ public class HyperCut2D {
 	private JComboBox cbxBrezinioDydis;
 	private JLabel lblBrezinioDydis;
 	private JScrollPane srlDetales;
+	private JPanel pnlSpalva;
 	private Packer packer = new Packer(0, 0);
 
 	/**
@@ -124,7 +128,7 @@ public class HyperCut2D {
 		frmHypercut = new JFrame();
 		frmHypercut.setIconImage(Toolkit.getDefaultToolkit().getImage(HyperCut2D.class.getResource("/resources/layout.png")));
 		frmHypercut.setTitle("HyperCut 2D");
-		frmHypercut.setBounds(100, 100, 836, 677);
+		frmHypercut.setBounds(100, 100, 906, 764);
 		frmHypercut.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmHypercut.getContentPane().setLayout(new MigLayout("", "[min:max][min:n,left]", "[max]"));
 		
@@ -287,6 +291,8 @@ public class HyperCut2D {
 					try {
 						BufferedReader in = new BufferedReader(new FileReader(directoryName + fileName));
 					    String name;
+					    String form;
+					    String color;
 					    int x;
 					    int y;
 					    int width;
@@ -294,11 +300,13 @@ public class HyperCut2D {
 					    PartListHandler newHandler = new PartListHandler();
 					    while (in.ready()) {
 					        name = in.readLine();
+					        form = in.readLine();
+					        color = in.readLine();
 					        x = Integer.parseInt(in.readLine());
 					        y = Integer.parseInt(in.readLine());
 					        width = Integer.parseInt(in.readLine());
 					        height = Integer.parseInt(in.readLine());
-					        Part newRectangle = new Part(name, PartListHandler.RECTANGLE, width, height);
+					        Part newRectangle = new Part(name, form, width, height, new Color(Integer.parseInt(color, 16)));
 					        newRectangle.setCoordinate(new Coordinate(x, y));
 					        newHandler.addPart(newRectangle);
 					    }
@@ -332,6 +340,10 @@ public class HyperCut2D {
 						out = new BufferedWriter(new FileWriter(directoryName + fileName));
 						for (Part part: partListHandler.getParts()) {
 						    out.write(part.getName() + "\n");
+						    out.write(part.getForm() + "\n");
+						    out.write(Integer.toString(part.getColor().getRed(), 16));
+						    out.write(Integer.toString(part.getColor().getGreen(), 16));
+						    out.write(Integer.toString(part.getColor().getBlue(), 16) + "\n");
 						    out.write(Integer.toString(part.getX()) + "\n");
 						    out.write(Integer.toString(part.getY()) + "\n");
 						    out.write(Integer.toString(part.getFirstValue()) + "\n");
@@ -443,7 +455,7 @@ public class HyperCut2D {
 		
 		JPanel pnlPastovusNustatymai = new JPanel();
 		pnlIsrinktaDetale.add(pnlPastovusNustatymai, "cell 0 0,growx,aligny top");
-		pnlPastovusNustatymai.setLayout(new MigLayout("", "[][grow]", "[][][grow]"));
+		pnlPastovusNustatymai.setLayout(new MigLayout("", "[][grow]", "[][][grow][grow]"));
 		
 		lblPavadinimas = new JLabel("Pavadinimas:");
 		pnlPastovusNustatymai.add(lblPavadinimas, "cell 0 0,alignx trailing");
@@ -459,6 +471,25 @@ public class HyperCut2D {
 		cbxForma = new JComboBox();
 		cbxForma.setModel(new DefaultComboBoxModel(new String[] { PartListHandler.RECTANGLE, PartListHandler.SQUARE }));
 		pnlPastovusNustatymai.add(cbxForma, "cell 1 1,growx");
+		
+		JLabel lblSpalva = new JLabel("Spalva:");
+		lblSpalva.setHorizontalAlignment(SwingConstants.LEFT);
+		pnlPastovusNustatymai.add(lblSpalva, "cell 0 2,alignx right,aligny center");
+		
+		pnlSpalva = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) pnlSpalva.getLayout();
+		pnlSpalva.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				Color color = JColorChooser.showDialog(frmHypercut, "Pasirinkite detalës spalvà...", pnlSpalva.getBackground());
+				if (color != null) {
+					pnlSpalva.setBackground(color);
+				}
+			}
+		});
+		pnlSpalva.setBackground(Color.WHITE);
+		pnlSpalva.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		pnlPastovusNustatymai.add(pnlSpalva, "cell 1 2,grow");
 		cbxForma.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				CardLayout cardLayout = (CardLayout)(detaliuNustatymai.getLayout());
@@ -554,5 +585,11 @@ public class HyperCut2D {
 		JComboBoxBinding<Dimension, CanvasSizeHandler, JComboBox> jComboBinding = SwingBindings.createJComboBoxBinding(UpdateStrategy.READ, canvasSizeHandler, canvasSizeHandlerBeanProperty, cbxBrezinioDydis);
 		jComboBinding.setConverter(new DimensionConverter());
 		jComboBinding.bind();
+		//
+		BeanProperty<JTable, Object> jTableBeanProperty_5 = BeanProperty.create("selectedElement");
+		ELProperty<JTable, Object> jTableEvalutionProperty_4 = ELProperty.create(jTableBeanProperty_5, "${color}");
+		BeanProperty<JPanel, Color> jPanelBeanProperty = BeanProperty.create("background");
+		AutoBinding<JTable, Object, JPanel, Color> autoBinding_5 = Bindings.createAutoBinding(UpdateStrategy.READ_WRITE, tblDetales, jTableEvalutionProperty_4, pnlSpalva, jPanelBeanProperty);
+		autoBinding_5.bind();
 	}
 }

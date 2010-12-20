@@ -1,5 +1,7 @@
 package com.stacktraceinc.hypercut2d;
 
+import java.awt.Color;
+
 public class Part extends AbstractModelObject {
 	private String name;
 	private String form;
@@ -7,11 +9,13 @@ public class Part extends AbstractModelObject {
 	private int secondValue = 0;
 	private boolean rotated = false;
 	private Coordinate coord = new Coordinate(-1, -1);
+	private Color color = Color.WHITE;
 
 	public String getForm() { return form; }
 	public String getName() { return name; }
 	public int getFirstValue() { return firstValue; }
 	public int getSecondValue() { return secondValue; }
+	public Color getColor() { return color; }
 	public Coordinate getCoord(){ return this.coord; }
 	public int getX() { return this.coord.getX(); }
 	public int getY() { return this.coord.getY(); }
@@ -37,7 +41,11 @@ public class Part extends AbstractModelObject {
 		this.secondValue = secondValue;
 		firePropertyChange("secondValue", oldValue, secondValue);
 	}
-	
+	public void setColor(Color color) {
+		Color oldColor = this.color;
+		this.color = color;
+		firePropertyChange("color", oldColor, color);
+	}	
 	public void setCoordinate(Coordinate coord) {
 		Coordinate oldCoord = this.coord;
 		this.coord = coord;
@@ -56,7 +64,7 @@ public class Part extends AbstractModelObject {
 	
 	public Part clone()
 	{
-		Part newPart = new Part(this.name, this.form, this.firstValue, this.secondValue);
+		Part newPart = new Part(this.name, this.form, this.firstValue, this.secondValue, this.color);
 		newPart.setCoordinate(this.coord);
 		
 		if(this.rotated){
@@ -80,5 +88,10 @@ public class Part extends AbstractModelObject {
 	public Part(String name, String form, int firstValue, int secondValue) {
 		this(name, form, firstValue);
 		this.secondValue = secondValue;
+	}
+	
+	public Part(String name, String form, int firstValue, int secondValue, Color color) {
+		this(name, form, firstValue, secondValue);
+		this.color = color;
 	}
 }

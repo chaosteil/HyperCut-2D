@@ -68,15 +68,20 @@ public class FancyCanvas extends JPanel {
 		g.setColor(Color.white);
 		g.fillRect(x, y, childPanel.getWidth(), childPanel.getHeight());
 		
-		g.setColor(Color.BLACK);
 		for (Part part: partList) {
 			if (part.getX() != -1 && part.getY() != -1)
 			{
+				g.setColor(part.getColor());
+				g.fillRect(x + part.getX(), y + part.getY(), part.getFirstValue(), part.getSecondValue());
+				g.setColor(Color.BLACK);
 				g.drawRect(x + part.getX(), y + part.getY(), part.getFirstValue(), part.getSecondValue());
 			
+				g.drawString(part.getName(), 
+						x + part.getX() + 5, 
+						y + part.getY() + 15);
 				g.drawString(Integer.toString(part.getFirstValue()) + "x" + Integer.toString(part.getSecondValue()), 
 							x + part.getX() + 5, 
-							y + part.getY() + 20);
+							y + part.getY() + 27);
 			}
 		}
 	}

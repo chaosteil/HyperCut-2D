@@ -24,7 +24,7 @@ public class PartListHandler extends AbstractModelObject {
 	
 	public void clonePart(int index) {
 		Part part = parts.get(index);
-		addPart(new Part(part.getName(), part.getForm(), part.getFirstValue(), part.getSecondValue()));
+		addPart(part.clone());
 	}
 	
 	public void erasePart(int index) {
