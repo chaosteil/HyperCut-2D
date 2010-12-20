@@ -11,6 +11,8 @@ import java.awt.image.RenderedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -19,8 +21,10 @@ public class FancyCanvas extends JPanel {
 	JPanel childPanel = new JPanel();
 	CompEventListener compEventListener = new CompEventListener();
 	Dimension d;
+	List<Part> partList = new ArrayList<Part>();
 
 	public FancyCanvas(Dimension d){
+		this.partList = partList;
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
@@ -54,7 +58,27 @@ public class FancyCanvas extends JPanel {
 		g.setColor(Color.GRAY);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
+		paintOffset(g, childPanel.getX(), childPanel.getY());
+	}
+	
+	public void paintOffset(Graphics g, int x, int y){
 		g.setColor(Color.white);
-		g.fillRect(childPanel.getX(), childPanel.getY(), childPanel.getWidth(), childPanel.getHeight());
+		g.fillRect(x, y, childPanel.getWidth(), childPanel.getHeight());
+		
+		g.setColor(Color.BLACK);
+		for (Part part: partList) {
+			if (part.getX() != -1 && part.getY() != -1)
+			{
+				g.drawRect(x + part.getX(), y + part.getY(), part.getFirstValue(), part.getSecondValue());
+			
+				g.drawString(Integer.toString(part.getFirstValue()) + "x" + Integer.toString(part.getSecondValue()), 
+							x + part.getX() + 5, 
+							y + part.getY() + 20);
+			}
+		}
+	}
+	
+	public void setPartList(List<Part> newPartList){
+		this.partList = newPartList;
 	}
 }

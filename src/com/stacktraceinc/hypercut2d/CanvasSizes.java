@@ -1,11 +1,13 @@
 package com.stacktraceinc.hypercut2d;
 
 import java.awt.BorderLayout;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import net.miginfocom.swing.MigLayout;
@@ -26,6 +28,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileWriter;
 
 public class CanvasSizes extends JDialog {
 
@@ -58,9 +65,8 @@ public class CanvasSizes extends JDialog {
 		}
 		{
 			JButton btnPridtiNauj = new JButton("Prid\u0117ti nauj\u0105...");
-			btnPridtiNauj.addMouseListener(new MouseAdapter() {
-				@Override
-				public void mouseReleased(MouseEvent e) {
+			btnPridtiNauj.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
 					CanvasSizeDialog cvd = new CanvasSizeDialog(CanvasSizes.this);
 					if (!cvd.okay) {
 						return;
@@ -100,11 +106,64 @@ public class CanvasSizes extends JDialog {
 		}
 		{
 			JButton btnAtidaryti = new JButton("Atidaryti...");
+			btnAtidaryti.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					FileDialog fileDialog = new FileDialog(CanvasSizes.this);
+					fileDialog.setMode(FileDialog.LOAD);
+					fileDialog.show();
+					String fileName = fileDialog.getFile();
+					String directoryName = fileDialog.getDirectory();
+					if (fileName != null) {
+						try {
+							BufferedReader in = new BufferedReader(new FileReader(directoryName + fileName));
+						    int width;
+						    int height;
+						    CanvasSizeHandler newHandler = new CanvasSizeHandler();
+						    while (in.ready()) {
+						        width = Integer.parseInt(in.readLine());
+						        height = Integer.parseInt(in.readLine());
+						        Dimension newDimension = new Dimension(width, height);
+						        newHandler.addSize(newDimension);
+						    }
+						    while (!CanvasSizes.this.handler.getSizes().isEmpty()){
+						    	CanvasSizes.this.handler.eraseSize(0);
+						    }
+						    for (Dimension dimension: newHandler.getSizes()){
+						    	CanvasSizes.this.handler.addSize(dimension);
+						    }
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(CanvasSizes.this, "Nurodytas blogas paneli\u0173 failas.", "Klaida", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				}
+			});
 			btnAtidaryti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/folder.png")));
 			contentPanel.add(btnAtidaryti, "flowx,cell 0 3,grow");
 		}
 		{
 			JButton btnIsaugoti = new JButton("I\u0161saugoti...");
+			btnIsaugoti.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					FileDialog fileDialog = new FileDialog(new JFrame());
+					fileDialog.setMode(FileDialog.SAVE);
+					fileDialog.show();
+					String fileName = fileDialog.getFile();
+					String directoryName = fileDialog.getDirectory();
+					if (fileName != null) {
+						BufferedWriter out;
+						try {
+							out = new BufferedWriter(new FileWriter(directoryName + fileName));
+							for (Dimension dimension: CanvasSizes.this.handler.getSizes()) {
+							    out.write((int)dimension.getWidth() + "\n");
+							    out.write((int)dimension.getHeight() + "\n");
+							}
+							out.close();
+						} catch (IOException e) {
+							
+					    }
+					}
+				}
+			});
 			btnIsaugoti.setIcon(new ImageIcon(CanvasSizes.class.getResource("/resources/page_save.png")));
 			contentPanel.add(btnIsaugoti, "cell 0 3,grow");
 		}

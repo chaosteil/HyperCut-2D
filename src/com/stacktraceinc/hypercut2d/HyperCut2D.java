@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -24,6 +25,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -52,7 +54,11 @@ import org.jdesktop.beansbinding.ObjectProperty;
 import org.jdesktop.swingbinding.JComboBoxBinding;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.awt.Toolkit;
 
@@ -77,7 +83,7 @@ public class HyperCut2D {
 	private JComboBox cbxBrezinioDydis;
 	private JLabel lblBrezinioDydis;
 	private JScrollPane srlDetales;
-
+	private Packer packer = new Packer(0, 0);
 
 	/**
 	 * Launch the application.
@@ -149,9 +155,8 @@ public class HyperCut2D {
 		pnlBrezinioDydis.add(cbxBrezinioDydis, "cell 1 0,growx");
 		
 		JButton btnKeistiDydius = new JButton("Keisti dyd\u017Eius...");
-		btnKeistiDydius.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
+		btnKeistiDydius.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				JDialog cvs = new CanvasSizes(frmHypercut, canvasSizeHandler);
 			}
 		});
@@ -173,76 +178,80 @@ public class HyperCut2D {
 		JButton btnOptimizuotiIdstym = new JButton("Optimizuoti i\u0161d\u0117stym\u0105");
 		pnlBrezinioVeiksmai.add(btnOptimizuotiIdstym, "cell 0 0,alignx left,growy");
 		btnOptimizuotiIdstym.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/wrench_orange.png")));
-		
+		btnOptimizuotiIdstym.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				fancyCanvas.setPartList(packer.pack(partListHandler.getParts()));
+			}
+		});
+
 		JButton btnSpausdinti = new JButton("Eksportuoti spausdinimui...");
-		btnSpausdinti.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-					JFileChooser fileChooser = new JFileChooser();
-					FileFilter jpegFileFilter = new FileFilter() {
-						@Override
-						public boolean accept(File f) {
-							String path = f.getName();
-							String extension = path.substring(path.lastIndexOf('.') + 1);
-							if (extension.equals("jpg") || extension.equals("jpeg")) {
-								return true;
-							}
-							return false;
-						}
-
-						@Override
-						public String getDescription() {
-							return "JPEG Image (.jpg, .jpeg)";
-						}
-					};
-					FileFilter pngFileFilter = new FileFilter() {
-						@Override
-						public boolean accept(File f) {
-							String path = f.getName();
-							String extension = path.substring(path.lastIndexOf('.') + 1);
-							if (extension.equals("png")) {
-								return true;
-							}
-							return false;
-						}
-
-						@Override
-						public String getDescription() {
-							return "PNG Image (.png)";
-						}
-					};
-					fileChooser.addChoosableFileFilter(jpegFileFilter);
-					fileChooser.addChoosableFileFilter(pngFileFilter);
-
-					int result = fileChooser.showSaveDialog(frmHypercut);
-					if (result == JFileChooser.APPROVE_OPTION) {
-						File file = fileChooser.getSelectedFile();
-						String path = file.getAbsolutePath();
+		btnSpausdinti.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser fileChooser = new JFileChooser();
+				FileFilter jpegFileFilter = new FileFilter() {
+					@Override
+					public boolean accept(File f) {
+						String path = f.getName();
 						String extension = path.substring(path.lastIndexOf('.') + 1);
-						String format;
-						if (fileChooser.getFileFilter() == jpegFileFilter){
-							// jpeg
-							if (!(extension.equals("jpg") || extension.equals("jpeg"))) {
-								path = path + ".jpg";
-							}
-							format = "JPEG";
-						} else {
-							// It's a png image!
-							if (!extension.equals("png")) {
-								path = path + ".png";
-							}
-							format = "PNG";
+						if (extension.equals("jpg") || extension.equals("jpeg")) {
+							return true;
 						}
-						System.out.println(path + " " + format);
-						try {
-							File saving_file = new File(path);
-							RenderedImage image = fancyCanvas.getImage();
-							System.out.println(image.getHeight());
-							ImageIO.write(image, format, saving_file);
-						} catch (IOException ioe) {
-							ioe.printStackTrace();
-						}
+						return false;
 					}
+
+					@Override
+					public String getDescription() {
+						return "JPEG Image (.jpg, .jpeg)";
+					}
+				};
+				FileFilter pngFileFilter = new FileFilter() {
+					@Override
+					public boolean accept(File f) {
+						String path = f.getName();
+						String extension = path.substring(path.lastIndexOf('.') + 1);
+						if (extension.equals("png")) {
+							return true;
+						}
+						return false;
+					}
+
+					@Override
+					public String getDescription() {
+						return "PNG Image (.png)";
+					}
+				};
+				fileChooser.addChoosableFileFilter(jpegFileFilter);
+				fileChooser.addChoosableFileFilter(pngFileFilter);
+
+				int result = fileChooser.showSaveDialog(frmHypercut);
+				if (result == JFileChooser.APPROVE_OPTION) {
+					File file = fileChooser.getSelectedFile();
+					String path = file.getAbsolutePath();
+					String extension = path.substring(path.lastIndexOf('.') + 1);
+					String format;
+					if (fileChooser.getFileFilter() == jpegFileFilter){
+						// jpeg
+						if (!(extension.equals("jpg") || extension.equals("jpeg"))) {
+							path = path + ".jpg";
+						}
+						format = "JPEG";
+					} else {
+						// It's a png image!
+						if (!extension.equals("png")) {
+							path = path + ".png";
+						}
+						format = "PNG";
+					}
+					System.out.println(path + " " + format);
+					try {
+						File saving_file = new File(path);
+						RenderedImage image = fancyCanvas.getImage();
+						System.out.println(image.getHeight());
+						ImageIO.write(image, format, saving_file);
+					} catch (IOException ioe) {
+						ioe.printStackTrace();
+					}
+				}
 			}
 		});
 		btnSpausdinti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/script_go.png")));
@@ -265,14 +274,75 @@ public class HyperCut2D {
 		JButton btnAtdaryti = new JButton("Atidaryti...");
 		pnlSarasoVeiksmai.add(btnAtdaryti, "cell 0 0,grow");
 		btnAtdaryti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_open.png")));
+		btnAtdaryti.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FileDialog fileDialog = new FileDialog(frmHypercut);
+				fileDialog.setMode(FileDialog.LOAD);
+				fileDialog.show();
+				String fileName = fileDialog.getFile();
+				String directoryName = fileDialog.getDirectory();
+				if (fileName != null) {
+					try {
+						BufferedReader in = new BufferedReader(new FileReader(directoryName + fileName));
+					    String name;
+					    int x;
+					    int y;
+					    int width;
+					    int height;
+					    PartListHandler newHandler = new PartListHandler();
+					    while (in.ready()) {
+					        name = in.readLine();
+					        x = Integer.parseInt(in.readLine());
+					        y = Integer.parseInt(in.readLine());
+					        width = Integer.parseInt(in.readLine());
+					        height = Integer.parseInt(in.readLine());
+					        Part newRectangle = new Part(name, PartListHandler.RECTANGLE, width, height);
+					        newRectangle.setCoordinate(new Coordinate(x, y));
+					        newHandler.addPart(newRectangle);
+					    }
+					    while (!partListHandler.getParts().isEmpty()){
+					    	partListHandler.erasePart(0);
+					    }
+					    for (Part part: newHandler.getParts()){
+					    	partListHandler.addPart(part);
+					    }
+					} catch (Exception e) {
+						JOptionPane.showMessageDialog(frmHypercut, "Nurodytas blogas form\u0173 failas.", "Klaida", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+			}
+		});
+
 		
 		JButton btnIssaugoti = new JButton("I\u0161saugoti...");
 		pnlSarasoVeiksmai.add(btnIssaugoti, "cell 1 0,growy");
 		btnIssaugoti.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_save.png")));
 		btnIssaugoti.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				FileDialog fileDialog = new FileDialog(frmHypercut);
+				fileDialog.setMode(FileDialog.SAVE);
+				fileDialog.show();
+				String fileName = fileDialog.getFile();
+				String directoryName = fileDialog.getDirectory();
+				if (fileName != null) {
+					BufferedWriter out;
+					try {
+						out = new BufferedWriter(new FileWriter(directoryName + fileName));
+						for (Part part: partListHandler.getParts()) {
+						    out.write(part.getName() + "\n");
+						    out.write(Integer.toString(part.getX()) + "\n");
+						    out.write(Integer.toString(part.getY()) + "\n");
+						    out.write(Integer.toString(part.getFirstValue()) + "\n");
+						    out.write(Integer.toString(part.getSecondValue()) + "\n");
+						}
+						out.close();
+					} catch (IOException e) {
+						
+				    }
+				}
 			}
 		});
+
 		
 		srlDetales = new JScrollPane();
 		pnlSarasas.add(srlDetales, "cell 0 1,grow");
@@ -300,9 +370,8 @@ public class HyperCut2D {
 		
 		JButton btnNaujaDetale = new JButton("Nauja detal\u0117");
 		pnlDetaliuVeiksmai.add(btnNaujaDetale, "cell 0 0 3 1,grow");
-		btnNaujaDetale.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
+		btnNaujaDetale.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				partListHandler.createNewPart();
 				ListSelectionModel selectionModel = tblDetales.getSelectionModel();
 				selectionModel.setSelectionInterval(0, tblDetales.getRowCount()-1);
@@ -312,9 +381,8 @@ public class HyperCut2D {
 		btnNaujaDetale.setIcon(new ImageIcon(HyperCut2D.class.getResource("/resources/layer_add.png")));
 		
 		JButton btnKlonuotiPasirinktaDetal = new JButton("Klonuoti detal\u0119");
-		btnKlonuotiPasirinktaDetal.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
+		btnKlonuotiPasirinktaDetal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				if (tblDetales.getSelectedRow() == -1){
 					return;
 				}
@@ -330,9 +398,8 @@ public class HyperCut2D {
 		pnlDetaliuVeiksmai.add(btnKlonuotiPasirinktaDetal, "cell 0 1,growy");
 		
 		JButton btnItrintiDetal = new JButton("I\u0161trinti detal\u0119");
-		btnItrintiDetal.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
+		btnItrintiDetal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 				if (tblDetales.getSelectedRow() == -1){
 					return;
 				}

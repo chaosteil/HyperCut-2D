@@ -19,7 +19,7 @@ public class PartListHandler extends AbstractModelObject {
 	public void createNewPart() {
 		autoIndex++;
 		// Automatic part creation based on previously selected?
-		addPart(new Rectangle("Detalë #" + autoIndex, RECTANGLE, 10, 20));
+		addPart(new Part("Detalë #" + autoIndex, RECTANGLE, 10, 20));
 	}
 	
 	public void clonePart(int index) {
