@@ -24,7 +24,6 @@ public class FancyCanvas extends JPanel {
 	List<Part> partList = new ArrayList<Part>();
 
 	public FancyCanvas(Dimension d){
-		this.partList = partList;
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
@@ -49,7 +48,7 @@ public class FancyCanvas extends JPanel {
 		BufferedImage bi = new BufferedImage(childPanel.getWidth(), childPanel.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 	    Graphics2D g = bi.createGraphics();
-	    paint(g);
+	    paintOffset(g, 0, 0);
 	    g.dispose();
 	    return bi;
 	}

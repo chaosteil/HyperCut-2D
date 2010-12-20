@@ -37,12 +37,12 @@ public class Part extends AbstractModelObject {
 		this.secondValue = secondValue;
 		firePropertyChange("secondValue", oldValue, secondValue);
 	}
+	
 	public void setCoordinate(Coordinate coord) {
 		Coordinate oldCoord = this.coord;
 		this.coord = coord;
 		firePropertyChange("coordinate", oldCoord, coord);
 	}	
-
 
 	public void rotate(){
 		if(this.rotated == false){
@@ -53,10 +53,7 @@ public class Part extends AbstractModelObject {
 	}
 	
 	public boolean rotation(){ return rotated; }
-	public Part(String name, String form) {
-		this.name = name;
-		this.form = form;
-	}
+	
 	public Part clone()
 	{
 		Part newPart = new Part(this.name, this.form, this.firstValue, this.secondValue);
@@ -68,6 +65,11 @@ public class Part extends AbstractModelObject {
 		
 		return newPart;
 		
+	}
+	
+	public Part(String name, String form) {
+		this.name = name;
+		this.form = form;
 	}
 	
 	public Part(String name, String form, int firstValue) {

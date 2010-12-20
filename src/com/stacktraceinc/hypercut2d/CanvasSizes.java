@@ -125,7 +125,7 @@ public class CanvasSizes extends JDialog {
 						        Dimension newDimension = new Dimension(width, height);
 						        newHandler.addSize(newDimension);
 						    }
-						    while (!CanvasSizes.this.handler.getSizes().isEmpty()){
+						    while (CanvasSizes.this.handler.getSizes() != newHandler.getSizes()){
 						    	CanvasSizes.this.handler.eraseSize(0);
 						    }
 						    for (Dimension dimension: newHandler.getSizes()){

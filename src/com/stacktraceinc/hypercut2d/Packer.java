@@ -45,16 +45,6 @@ public class Packer{
 		}
 		
 		private PackerNode insert(Part rect){
-			int rectWidth = 0; 
-			int rectHeight = 0;
-			
-			if(rect.rotation()){
-				rectWidth = rect.getSecondValue();
-				rectHeight = rect.getFirstValue();
-			}else{
-				rectWidth = rect.getFirstValue();
-				rectHeight = rect.getSecondValue();
-			}
 			
 			System.out.println("New insert call");
 			if(this.child[0] != null && this.child[1] != null){
@@ -75,44 +65,52 @@ public class Packer{
 					System.out.println("Already has a shape. ");
 					return null;
 				}
-
-				if(this.pb.getSize() < rect.getArea()){
+				
+				System.out.println(this.pb.getWidth() + " w " + rect.getFirstValue());
+				System.out.println(this.pb.getHeight() + " h " + rect.getSecondValue());
+				
+				if(this.pb.getSize() < rect.getArea() || pb.getWidth() < rect.getFirstValue() || pb.getHeight() < rect.getSecondValue()){
 					System.out.println("Shape too big");
 					rect.setCoordinate(new Coordinate(-1, -1));
 					return null;
 				}
 
-				System.out.println(this.pb.getWidth() + " w " + rectWidth);
-				System.out.println(this.pb.getHeight() + " h " + rectHeight);
 				
 				
 				
-				if((this.pb.getWidth() == rectWidth) 
-				&& (this.pb.getHeight() == rectHeight) ){
+				
+				if((this.pb.getWidth() == rect.getFirstValue()) 
+				&& (this.pb.getHeight() == rect.getSecondValue()) ){
 					this.rect = rect;
 					rect.setCoordinate(this.coord);
 					System.out.println("inserting at: " + this.coord.getX() + " " + this.coord.getY() + " " + " ");
 					return this;	
 				}
 
+				if((pb.getWidth() > pb.getHeight()) && (rect.getFirstValue() < rect.getSecondValue())){
+					rect.rotate();
+				}else if((pb.getWidth() < pb.getHeight()) && (rect.getFirstValue() > rect.getSecondValue())){
+					rect.rotate();
+				}
+				
 				this.child[0] = new PackerNode();
 				this.child[1] = new PackerNode();
 
-				int difWidth = Math.abs(pb.getWidth() - rectWidth);
-				int difHeight = Math.abs(pb.getHeight() - rectHeight);
+				int difWidth = Math.abs(pb.getWidth() - rect.getFirstValue());
+				int difHeight = Math.abs(pb.getHeight() - rect.getSecondValue());
 
 				if(difWidth > difHeight){
 					System.out.println("W > H ");
 					this.child[0].coord = new Coordinate(this.coord.getX(), this.coord.getY());
-					this.child[1].coord = new Coordinate(this.coord.getX() + rectWidth, this.coord.getY());
-					this.child[0].pb = new PackerBox(this.pb.sLeft, this.pb.sTop, this.pb.sLeft + rectWidth, this.pb.sBottom);
-					this.child[1].pb = new PackerBox(this.pb.sLeft + rectWidth, this.pb.sTop, this.pb.sRight, this.pb.sBottom);
+					this.child[1].coord = new Coordinate(this.coord.getX() + rect.getFirstValue(), this.coord.getY());
+					this.child[0].pb = new PackerBox(this.pb.sLeft, this.pb.sTop, this.pb.sLeft + rect.getFirstValue(), this.pb.sBottom);
+					this.child[1].pb = new PackerBox(this.pb.sLeft + rect.getFirstValue(), this.pb.sTop, this.pb.sRight, this.pb.sBottom);
 				}else{
 					System.out.println("H > W "); 
 					this.child[0].coord = new Coordinate(this.coord.getX(), this.coord.getY());
-					this.child[1].coord = new Coordinate(this.coord.getX(), this.coord.getY() + rectHeight);
-					this.child[0].pb = new PackerBox(this.pb.sLeft, this.pb.sTop, this.pb.sRight, this.pb.sTop + rectHeight);
-					this.child[1].pb = new PackerBox(this.pb.sLeft, this.pb.sTop + rectHeight, this.pb.sRight, this.pb.sBottom);
+					this.child[1].coord = new Coordinate(this.coord.getX(), this.coord.getY() + rect.getSecondValue());
+					this.child[0].pb = new PackerBox(this.pb.sLeft, this.pb.sTop, this.pb.sRight, this.pb.sTop + rect.getSecondValue());
+					this.child[1].pb = new PackerBox(this.pb.sLeft, this.pb.sTop + rect.getSecondValue(), this.pb.sRight, this.pb.sBottom);
 				}
 
 				return this.child[0].insert(rect);

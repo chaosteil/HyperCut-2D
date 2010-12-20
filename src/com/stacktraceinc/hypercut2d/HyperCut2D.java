@@ -150,6 +150,7 @@ public class HyperCut2D {
 				
 				Dimension d = canvasSizeHandler.getSizes().get(cbxBrezinioDydis.getSelectedIndex());
 				fancyCanvas.panelResize(d);
+				packer.resize((int)d.getWidth(), (int)d.getHeight());
 			}
 		});
 		pnlBrezinioDydis.add(cbxBrezinioDydis, "cell 1 0,growx");
