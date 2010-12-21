@@ -16,6 +16,7 @@ public class Part extends AbstractModelObject {
 	public int getFirstValue() { return firstValue; }
 	public int getSecondValue() { return secondValue; }
 	public Coordinate getCoord(){ return this.coord; }
+	public boolean isRotated() { return this.rotated; }
 	public int getX() { return this.coord.getX(); }
 	public int getY() { return this.coord.getY(); }
 	public int getArea() { return firstValue * secondValue; }

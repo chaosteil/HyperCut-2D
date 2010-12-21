@@ -58,18 +58,44 @@ public class FancyCanvas extends JPanel {
 	}	
 	
 	public void paint(Graphics g){
-		g.setColor(Color.GRAY);
-		g.fillRect(0, 0, getWidth(), getHeight());
-
 		paintOffset(g, childPanel.getX(), childPanel.getY());
+		g.setColor(Color.GRAY);
+		g.fillRect(0, 0, getWidth(), childPanel.getY());
+    g.fillRect(0, 0, childPanel.getX(), getHeight());
+    g.fillRect(childPanel.getX()+childPanel.getWidth(), 0, getWidth(), getHeight());
+    g.fillRect(0, childPanel.getY()+childPanel.getHeight(), getWidth(), getHeight());
 	}
 	
 	public void paintOffset(Graphics g, int x, int y){
 		g.setColor(Color.white);
 		g.fillRect(x, y, childPanel.getWidth(), childPanel.getHeight());
+
+		for (Part part: partList) {
+			if (part.getX() != -1 && part.getY() != -1){
+				g.setColor(Color.GRAY);
+				g.drawRect(x + part.getX() -2, y + part.getY() -2, part.getFirstValue() + 2, part.getSecondValue() + 2);
+
+				g.setColor(part.getColor());
+				g.fillRect(x + part.getX(), y + part.getY(), part.getFirstValue(), part.getSecondValue());
+				g.setColor(Color.BLACK);
+				g.drawRect(x + part.getX(), y + part.getY(), part.getFirstValue(), part.getSecondValue());
+
+				g.drawString(part.getName(),
+						x + part.getX() + 5,
+						y + part.getY() + 15);
+				g.drawString(Integer.toString(part.getFirstValue()) + "x" + Integer.toString(part.getSecondValue()),
+						x + part.getX() + 5,
+						y + part.getY() + 27);
+			}
+		}
+	}
+	
+	/*public void paintOffset(Graphics g, int x, int y){
+		g.setColor(Color.white);
+		g.fillRect(x, y, childPanel.getWidth(), childPanel.getHeight());
 		
 		for (Part part: partList) {
-			if (part.getX() != -1 && part.getY() != -1)
+			if (part.getX() != -1 && part.getY() != -1 && part.getX() != -3 && part.getY() != -3)
 			{
 				g.setColor(part.getColor());
 				g.fillRect(x + part.getX(), y + part.getY(), part.getFirstValue(), part.getSecondValue());
@@ -84,7 +110,7 @@ public class FancyCanvas extends JPanel {
 							y + part.getY() + 27);
 			}
 		}
-	}
+	}*/
 
 	public void setPartList(List<Part> newPartList){
 		this.partList = newPartList;

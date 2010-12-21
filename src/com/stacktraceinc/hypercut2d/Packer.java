@@ -69,10 +69,14 @@ public class Packer{
 				System.out.println(this.pb.getWidth() + " w " + rect.getFirstValue());
 				System.out.println(this.pb.getHeight() + " h " + rect.getSecondValue());
 				
-				if((pb.getWidth() > pb.getHeight()) && (rect.getFirstValue() < rect.getSecondValue())){
-					rect.rotate();
-				}else if((pb.getWidth() < pb.getHeight()) && (rect.getFirstValue() > rect.getSecondValue())){
-					rect.rotate();
+				if(rect.isRotated() == false){
+					if((pb.getWidth() > pb.getHeight()) && (rect.getFirstValue() < rect.getSecondValue())){
+						System.out.println("rotating 1");
+						rect.rotate();
+					}else if((pb.getWidth() < pb.getHeight()) && (rect.getFirstValue() > rect.getSecondValue())){
+						System.out.println("rotating 2");
+						rect.rotate();
+					}
 				}
 				
 				if(this.pb.getSize() < rect.getArea() || pb.getWidth() < rect.getFirstValue() || pb.getHeight() < rect.getSecondValue()){
@@ -117,6 +121,7 @@ public class Packer{
 	private PackerNode root;
 
 	private void clearTree(){
+		root.rect = null;
 		root.child[0] = null;
 		root.child[1] = null;
 	}
@@ -127,11 +132,11 @@ public class Packer{
 		for(Part part : list){
 			sortedList.add(part.clone());
 		}
-/*		
+		
 		for(Part part : sortedList){
 			part.setFirstValue(part.getFirstValue() + 4);
 			part.setSecondValue(part.getSecondValue() + 4);
-		}*/
+		}
 		
 		Collections.sort(sortedList, new PartComparator());
 		return sortedList;
@@ -139,11 +144,11 @@ public class Packer{
 	
 	Packer(int width, int height){
 		root = new PackerNode();
-		root.pb = new PackerBox(0, 0, width, height);
+		root.pb = new PackerBox(0, 0, width + 4, height + 4);
 	}
 	
 	public void resize(int width, int height){
-		root.pb = new PackerBox(0, 0, width, height);
+		root.pb = new PackerBox(0, 0, width + 4, height + 4);
 	}
 
 	public List<Part> pack(List<Part> rectangles){
@@ -154,6 +159,11 @@ public class Packer{
 			this.root.insert(list.get(i));			
 		}
 		
+		for(Part part : list){
+			part.setFirstValue(part.getFirstValue() - 4);
+			part.setSecondValue(part.getSecondValue() - 4);
+		}
+				
 		return list;
 	}		
 }
