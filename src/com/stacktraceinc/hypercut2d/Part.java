@@ -23,12 +23,13 @@ public class Part extends AbstractModelObject {
 	public Color getColor() { return color; }
 	
 	public void setForm(String form) {
-		if (form == PartListHandler.SQUARE) {
-			setSecondValue(this.firstValue);
-		}
 		String oldValue = this.form;
 		this.form = form;
 		firePropertyChange("form", oldValue, form);
+
+		if (this.form == PartListHandler.SQUARE) {
+			setSecondValue(this.firstValue);
+		}
 	}
 	public void setName(String name) {
 		String oldValue = this.name;
@@ -36,17 +37,21 @@ public class Part extends AbstractModelObject {
 		firePropertyChange("name", oldValue, name);
 	}
 	public void setFirstValue(int firstValue) {
-		if (form == PartListHandler.SQUARE) {
-			setSecondValue(firstValue);
-		}
 		int oldValue = this.firstValue;
 		this.firstValue = firstValue;
 		firePropertyChange("firstValue", oldValue, firstValue);
+		if (form == PartListHandler.SQUARE) {
+			this.secondValue = this.firstValue;
+		}
 	}
 	public void setSecondValue(int secondValue) {
 		int oldValue = this.secondValue;
 		this.secondValue = secondValue;
 		firePropertyChange("secondValue", oldValue, secondValue);
+
+		if (form == PartListHandler.SQUARE) {
+			setFirstValue(this.secondValue);
+		}
 	}
 	
 	public void setCoordinate(Coordinate coord) {

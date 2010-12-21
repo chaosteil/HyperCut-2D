@@ -127,7 +127,7 @@ public class HyperCut2D {
 		
 		frmHypercut = new JFrame();
 		frmHypercut.setIconImage(Toolkit.getDefaultToolkit().getImage(HyperCut2D.class.getResource("/resources/layout.png")));
-		frmHypercut.setTitle("HyperCut 2D");
+		frmHypercut.setTitle("HyperCut 2D - Stacktrace Inc.");
 		frmHypercut.setBounds(100, 100, 906, 764);
 		frmHypercut.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmHypercut.getContentPane().setLayout(new MigLayout("", "[min:max][min:n,left]", "[max]"));
