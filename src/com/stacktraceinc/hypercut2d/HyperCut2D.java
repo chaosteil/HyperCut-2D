@@ -146,8 +146,9 @@ public class HyperCut2D {
 		pnlBrezinioDydis.add(lblBrezinioDydis, "cell 0 0,alignx trailing");
 		
 		cbxBrezinioDydis = new JComboBox();
-		cbxBrezinioDydis.addPropertyChangeListener(new PropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent arg0) {
+		cbxBrezinioDydis.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
 				if (cbxBrezinioDydis.getSelectedIndex() == -1){
 					return;
 				}
@@ -494,7 +495,7 @@ public class HyperCut2D {
 		pnlSpalva.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
-				Color color = JColorChooser.showDialog(frmHypercut, "Pasirinkite detalës spalvà...", pnlSpalva.getBackground());
+				Color color = JColorChooser.showDialog(frmHypercut, "Pasirinkite detal\u0117s spalv\u0105...", pnlSpalva.getBackground());
 				if (color != null) {
 					pnlSpalva.setBackground(color);
 				}

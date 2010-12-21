@@ -41,7 +41,7 @@ public class FancyCanvas extends JPanel {
 		childPanel.setMinimumSize(null);
 		childPanel.setMinimumSize(d);
 		compEventListener.resize(d);
-		this.revalidate();
+		childPanel.revalidate();
 	}
 
 	public void refresh() {
@@ -73,7 +73,7 @@ public class FancyCanvas extends JPanel {
 		for (Part part: partList) {
 			if (part.getX() != -1 && part.getY() != -1){
 				g.setColor(Color.GRAY);
-				g.drawRect(x + part.getX() -2, y + part.getY() -2, part.getFirstValue() + 2, part.getSecondValue() + 2);
+				g.drawRect(x + part.getX() -2, y + part.getY() -2, part.getFirstValue() + 4, part.getSecondValue() + 4);
 
 				g.setColor(part.getColor());
 				g.fillRect(x + part.getX(), y + part.getY(), part.getFirstValue(), part.getSecondValue());
